@@ -34,5 +34,13 @@ Thumbs.db
 *.swp
 *.swo
 
-# ✅ تأكد أن package-lock.json غير موجود في هذه القائمة!
-# (لا تضف: !package-lock.json لأنه مرفوع افتراضياً)
+# ✅ السماح برفع ملفات أندرويد الأساسية للبناء في CI
+!android/build.gradle
+!android/settings.gradle
+!android/gradle/
+!android/gradlew
+!android/gradlew.bat
+!android/app/build.gradle
+!android/app/src/main/AndroidManifest.xml
+!android/app/src/main/java/
+!android/app/src/main/res/
