@@ -25,12 +25,10 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
-      - name: Clear npm cache (to avoid stale modules)
-        run: npm cache clean --force
-
       - name: Install dependencies
         run: |
-          npm ci --prefer-offline --no-audit
+          # ✅ استخدام npm install بدلاً من npm ci (لا يتطلب package-lock.json)
+          npm install
           # ✅ تثبيت حزم Expo المتوافقة مع SDK تلقائياً
           npx expo install --fix
 
