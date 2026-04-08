@@ -6,9 +6,8 @@
     "start": "expo start",
     "android": "expo run:android",
     "web": "expo start --web",
-    "build:apk": "eas build --platform android --profile production",
-    "build:apk:tv": "eas build --platform android --profile tv",
-    "prebuild": "expo prebuild --platform android",
+    "prebuild": "npx expo prebuild --platform android --clean",
+    "build:android": "cd android && ./gradlew assembleRelease",
     "clean": "rm -rf node_modules package-lock.json .expo android ios"
   },
   "dependencies": {
