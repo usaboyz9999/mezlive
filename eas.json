@@ -16,24 +16,14 @@
       "distribution": "internal",
       "android": {
         "buildType": "apk",
-        "gradleCommand": ":app:assembleRelease",
-        "minSdkVersion": 21,
-        "targetSdkVersion": 34,
-        "architectures": ["arm64-v8a", "armeabi-v7a", "x86_64"],
-        "universalApk": true,
-        "enableProguardInReleaseBuilds": true,
-        "enableShrinkResourcesInReleaseBuilds": true
+        "gradleCommand": ":app:assembleRelease"
       }
     },
     "tv": {
       "distribution": "internal",
       "android": {
         "buildType": "apk",
-        "gradleCommand": ":app:assembleRelease",
-        "minSdkVersion": 21,
-        "targetSdkVersion": 34,
-        "architectures": ["arm64-v8a", "armeabi-v7a", "x86_64"],
-        "universalApk": true
+        "gradleCommand": ":app:assembleRelease"
       },
       "env": {
         "EXPO_TV_ENABLED": "true"
@@ -41,10 +31,6 @@
     }
   },
   "submit": {
-    "production": {
-      "android": {
-        "releaseTrack": "internal"
-      }
-    }
+    "production": {}
   }
 }
