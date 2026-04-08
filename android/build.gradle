@@ -1,0 +1,39 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    ext {
+        // ✅ تعريف kotlinVersion صراحة لحل خطأ "unknown property"
+        kotlinVersion = '2.0.21'
+        
+        // إعدادات أندرويد القياسية لـ Expo SDK 54
+        minSdkVersion = 21
+        targetSdkVersion = 34
+        compileSdkVersion = 34
+        ndkVersion = '26.1.10909125'
+    }
+    
+    repositories {
+        google()
+        mavenCentral()
+    }
+    
+    dependencies {
+        // ✅ الآن سيوجد المتغير عند استخدامه هنا
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+        classpath("com.android.tools.build:gradle:8.2.1")
+        // Expo plugins
+        classpath("expo.gradle.plugin:expo-gradle-plugin:0.2.0")
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://www.jitpack.io' }
+    }
+}
+
+// Expo autolinking setup
+apply plugin: "expo-root-project"
+apply from: "expo-autolinking.gradle"
