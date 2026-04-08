@@ -33,8 +33,7 @@
         "icon": "./assets/tv-icon.png",
         "banner": "./assets/tv-banner.png"
       },
-      "allowBackup": false,
-      "useNextNotificationsApi": true
+      "allowBackup": false
     },
     "web": {
       "favicon": "./assets/favicon.png"
