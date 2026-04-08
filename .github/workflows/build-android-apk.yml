@@ -28,8 +28,9 @@ jobs:
       - name: Install dependencies
         run: |
           # ✅ تثبيت الاعتمادات مع تجاوز تعارضات الأقران
-          # ✅ تم إزالة "expo install --fix" لمنع الترقية التلقائية لـ SDK 55
           npm install --legacy-peer-deps
+          # ✅ تثبيت EAS CLI عالمياً (مطلوب لأوامر eas)
+          npm install -g eas-cli@latest
 
       - name: Verify EAS Authentication
         run: |
