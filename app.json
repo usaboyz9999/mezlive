@@ -50,9 +50,6 @@
             "enableProguardInReleaseBuilds": true,
             "enableShrinkResourcesInReleaseBuilds": true,
             "kotlinVersion": "2.0.21"
-          },
-          "ios": {
-            "useFrameworks": "static"
           }
         }
       ],
