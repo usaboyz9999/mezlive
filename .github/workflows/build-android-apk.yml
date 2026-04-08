@@ -25,15 +25,24 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
+      - name: Clear npm cache (to avoid stale modules)
+        run: npm cache clean --force
+
       - name: Install dependencies
         run: |
-          npm install
-          npm install -g eas-cli@latest
+          npm ci --prefer-offline --no-audit
+          # ✅ تثبيت حزم Expo المتوافقة مع SDK تلقائياً
+          npx expo install --fix
+
+      - name: Verify plugins are installed
+        run: |
+          echo "✅ Checking expo-build-properties..."
+          node -e "require('expo-build-properties')" && echo "✅ Plugin loaded successfully"
+          echo "✅ Checking expo-screen-orientation..."
+          node -e "require('expo-screen-orientation')" && echo "✅ Plugin loaded successfully"
 
       - name: Verify EAS Authentication
         run: |
-          # ✅ في GitHub Actions: لا نستخدم eas login أبداً
-          # ✅ EAS CLI يقرأ EXPO_TOKEN تلقائياً من البيئة
           echo "✅ EXPO_TOKEN مضبوط، المصادقة جاهزة"
           eas whoami
         env:
@@ -42,7 +51,10 @@ jobs:
       - name: Build Android APK
         id: eas_build
         run: |
-          # ✅ البناء مع إخراج JSON لاستخراج رابط التحميل
+          # ✅ كتم تحذير Expo Go (اختياري)
+          export EAS_BUILD_NO_EXPO_GO_WARNING=true
+          
+          # ✅ البناء مع إخراج JSON
           BUILD_OUTPUT=$(eas build --platform android --profile production --non-interactive --json)
           BUILD_URL=$(echo "$BUILD_OUTPUT" | jq -r '.[0].artifacts.applicationArchiveUrl // empty')
           
@@ -72,14 +84,8 @@ jobs:
           name: Release ${{ github.ref_name }}
           body: |
             ## 📱 mezlive ${{ github.ref_name }}
-            
-            ### 🔗 روابط التحميل:
+            ### 🔗 التحميل:
             - [من GitHub Releases](https://github.com/${{ github.repository }}/releases/latest/download/mezlive.apk)
-            - [من Expo Dashboard](${{ steps.eas_build.outputs.build_url }})
-            
-            ### 📋 متطلبات النظام:
-            - أندرويد 5.0 أو أحدث
-            - مساحة تخزين: 50 ميجابايت
           draft: false
           prerelease: false
         env:
