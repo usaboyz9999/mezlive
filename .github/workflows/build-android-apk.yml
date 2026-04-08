@@ -27,8 +27,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          # ✅ استخدام npm install بدلاً من npm ci (لا يتطلب package-lock.json)
-          npm install
+          # ✅ استخدام --legacy-peer-deps لتجاوز تعارضات الاعتمادات
+          npm install --legacy-peer-deps
           # ✅ تثبيت حزم Expo المتوافقة مع SDK تلقائياً
           npx expo install --fix
 
