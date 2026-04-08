@@ -1,6 +1,6 @@
 {
   "expo": {
-    "owner": "atlobni2",
+    "owner": "mezlive",
     "name": "mezlive",
     "slug": "mezlive",
     "version": "1.0.0",
@@ -56,7 +56,7 @@
     ],
     "extra": {
       "eas": {
-        "projectId": "1ca0d3a8-eab5-4afe-b0c7-dd6036568826"
+        "projectId": "a6ea8a50-bf6f-40f7-a642-83cca7a0767f"
       }
     }
   }
