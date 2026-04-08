@@ -4,11 +4,9 @@
   "main": "expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
-    "android": "expo run:android",
+    "android": "expo start --android",
     "web": "expo start --web",
-    "prebuild": "npx expo prebuild --platform android --clean",
-    "build:android": "cd android && ./gradlew assembleRelease",
-    "clean": "rm -rf node_modules package-lock.json .expo android ios"
+    "clean": "rm -rf node_modules .expo"
   },
   "dependencies": {
     "expo": "~54.0.0",
