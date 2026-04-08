@@ -1,25 +1,22 @@
 workflows:
-  android-apk:
-    name: Build Android APK
-    max_build_duration: 90
-    instance_type: mac_mini_m2
-    
+  expo-android:
+    name: Build APK (Cloud Only)
+    instance_type: linux
     environment:
       node: 20.10.0
       java: 17
-      xcode: latest
-      cocoapods: default
       
     scripts:
-      - name: Install Node dependencies
-        script: |
-          npm install --legacy-peer-deps
-          
-      - name: Build Release APK
+      - name: 1. Install Dependencies
+        script: npm install --legacy-peer-deps
+        
+      - name: 2. Generate Android Project
+        script: npx expo prebuild --platform android --clean
+        
+      - name: 3. Build Release APK
         script: |
           cd android
           chmod +x gradlew
-          echo "🚀 Starting Gradle build with predefined kotlinVersion..."
           ./gradlew assembleRelease --no-daemon --stacktrace
           
     artifacts:
