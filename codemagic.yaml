@@ -15,32 +15,33 @@ workflows:
         script: |
           npm install --legacy-peer-deps
           
-      - name: Prebuild Android with clean cache
+      - name: Clean and Prebuild Android
         script: |
-          # ✅ تنظيف الكاش لضمان تطبيق إعدادات Kotlin الجديدة
-          rm -rf android/.gradle android/app/build node_modules/.cache
+          # ✅ تنظيف شامل لضمان تطبيق إعدادات Kotlin الجديدة
+          echo "🧹 Cleaning old build artifacts..."
+          rm -rf android/.gradle android/app/build android/build node_modules/.cache .expo
+          
+          echo "🔄 Running expo prebuild with clean flag..."
           npx expo prebuild --platform android --clean --no-install
           
-      - name: Debug Kotlin configuration (optional - for info only)
-        script: |
-          # ✅ هذه الخطوة للمعلومات فقط ولا توقف البناء إذا فشلت
-          echo "🔍 Checking Kotlin configuration..."
-          if [ -f "android/build.gradle" ]; then
-            echo "📄 Contents of android/build.gradle (relevant lines):"
-            grep -E "kotlin|Kotlin" android/build.gradle || echo "⚠️ No kotlin lines found"
+          # ✅ التحقق من أن kotlinVersion مُعرّف في build.gradle
+          echo "🔍 Verifying kotlinVersion in android/build.gradle..."
+          if grep -q "kotlinVersion = '2.0.21'" android/build.gradle; then
+            echo "✅ kotlinVersion 2.0.21 found in ext block"
+          else
+            echo "⚠️ kotlinVersion not found, adding manually as fallback..."
+            # إضافة يدوية كحل احتياطي
+            sed -i '' '/buildscript {/a\
+    ext {\
+        kotlinVersion = '\''2.0.21'\''\
+    }' android/build.gradle 2>/dev/null || true
           fi
-          if [ -f "android/gradle.properties" ]; then
-            echo "📄 Contents of android/gradle.properties:"
-            grep -E "kotlin" android/gradle.properties || echo "⚠️ No kotlin props found"
-          fi
-          # ✅ لا نستخدم 'exit 1' هنا حتى لا يفشل البناء
-          echo "✅ Debug step completed"
           
       - name: Build Release APK
         script: |
           cd android
           chmod +x gradlew
-          # ✅ استخدام --no-daemon لتجنب مشاكل الذاكرة في CI
+          # ✅ استخدام --no-daemon و --stacktrace للتشخيص الدقيق
           ./gradlew assembleRelease --no-daemon --stacktrace
           
     artifacts:
