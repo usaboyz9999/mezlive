@@ -15,42 +15,11 @@ workflows:
         script: |
           npm install --legacy-peer-deps
           
-      - name: Clean and Prebuild Android
-        script: |
-          echo "🧹 Cleaning old build artifacts..."
-          rm -rf android/.gradle android/app/build android/build node_modules/.cache .expo
-          
-          echo "🔄 Running expo prebuild with clean flag..."
-          npx expo prebuild --platform android --clean --no-install
-          
-          echo "✅ Prebuild completed successfully"
-          
-      - name: Verify Kotlin configuration
-        script: |
-          echo "🔍 Checking Kotlin configuration..."
-          
-          # التحقق من وجود ملف build.gradle
-          if [ ! -f "android/build.gradle" ]; then
-            echo "❌ android/build.gradle not found"
-            exit 1
-          fi
-          
-          # عرض الأسطر الأولى للتحقق البصري
-          echo "📄 First 25 lines of android/build.gradle:"
-          head -n 25 android/build.gradle
-          
-          # البحث عن أي ذكر لـ kotlin (لأغراض المعلومات فقط)
-          echo ""
-          echo "🔍 Searching for kotlin references:"
-          grep -i "kotlin" android/build.gradle || echo "⚠️ No explicit kotlin lines found (may be handled by expo-build-properties)"
-          
-          echo "✅ Verification step completed"
-          
       - name: Build Release APK
         script: |
           cd android
           chmod +x gradlew
-          echo "🚀 Starting Gradle build..."
+          echo "🚀 Starting Gradle build with predefined kotlinVersion..."
           ./gradlew assembleRelease --no-daemon --stacktrace
           
     artifacts:
