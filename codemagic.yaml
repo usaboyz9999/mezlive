@@ -1,27 +1,38 @@
 workflows:
   android-apk:
     name: Build Android APK
-    max_build_duration: 60
-    instance_type: mac_mini_m1  # أو linux
+    max_build_duration: 90
+    instance_type: mac_mini_m2  # أو linux
     
     environment:
       node: 20.10.0
       java: 17
+      xcode: latest
+      cocoapods: default
       
     scripts:
-      - name: Install dependencies
+      - name: Install Node dependencies
         script: |
           npm install --legacy-peer-deps
           
-      - name: Prebuild Android
+      - name: Prebuild Android with clean cache
         script: |
+          # ✅ تنظيف الكاش لضمان تطبيق إعدادات Kotlin الجديدة
+          rm -rf android/.gradle android/app/build
           npx expo prebuild --platform android --clean --no-install
           
-      - name: Build APK
+      - name: Verify Kotlin version in build.gradle
+        script: |
+          # ✅ التأكد من تطبيق إصدار Kotlin الصحيح
+          grep -r "kotlinVersion" android/build.gradle || echo "⚠️ kotlinVersion not found in build.gradle"
+          grep -r "2.0.21" android/build.gradle && echo "✅ Kotlin 2.0.21 found"
+          
+      - name: Build Release APK
         script: |
           cd android
           chmod +x gradlew
-          ./gradlew assembleRelease --no-daemon
+          # ✅ استخدام --no-daemon لتجنب مشاكل الذاكرة في CI
+          ./gradlew assembleRelease --no-daemon --stacktrace
           
     artifacts:
       - android/app/build/outputs/**/*.apk
