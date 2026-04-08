@@ -30,12 +30,11 @@ jobs:
           npm install
           npm install -g eas-cli@latest
 
-      - name: Setup EAS (using EXPO_TOKEN env var)
+      - name: Verify EAS Authentication
         run: |
-          # ✅ الطريقة الصحيحة: تعيين المتغير ثم تشغيل eas login بدون --token
-          export EXPO_TOKEN="${{ secrets.EXPO_TOKEN }}"
-          echo "EXPO_TOKEN is set: ${EXPO_TOKEN:0:10}..."
-          eas login
+          # ✅ في GitHub Actions: لا نستخدم eas login أبداً
+          # ✅ EAS CLI يقرأ EXPO_TOKEN تلقائياً من البيئة
+          echo "✅ EXPO_TOKEN مضبوط، المصادقة جاهزة"
           eas whoami
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
@@ -43,7 +42,7 @@ jobs:
       - name: Build Android APK
         id: eas_build
         run: |
-          # ✅ البناء مع إخراج النتيجة بصيغة JSON لاستخراج الرابط
+          # ✅ البناء مع إخراج JSON لاستخراج رابط التحميل
           BUILD_OUTPUT=$(eas build --platform android --profile production --non-interactive --json)
           BUILD_URL=$(echo "$BUILD_OUTPUT" | jq -r '.[0].artifacts.applicationArchiveUrl // empty')
           
@@ -51,7 +50,7 @@ jobs:
             echo "build_url=$BUILD_URL" >> $GITHUB_OUTPUT
             echo "✅ Build completed: $BUILD_URL"
           else
-            echo "⚠️ Could not extract build URL from JSON output"
+            echo "⚠️ Could not extract build URL. Output:"
             echo "$BUILD_OUTPUT"
           fi
         env:
