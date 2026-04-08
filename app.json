@@ -3,7 +3,7 @@
     "owner": "mezlive",
     "name": "mezlive",
     "slug": "mezlive",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "orientation": "default",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
@@ -16,7 +16,7 @@
     "platforms": ["android", "web"],
     "android": {
       "package": "com.mezlive.app",
-      "versionCode": 2,
+      "versionCode": 3,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0f0f1a"
@@ -39,11 +39,19 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "kotlinVersion": "2.0.21"
+          }
+        }
+      ],
       "expo-screen-orientation"
     ],
     "extra": {
       "eas": {
-        "projectId": "a6ea8a50-bf6f-40f7-a642-83cca7a0767f"
+        "projectId": "1ca0d3a8-eab5-4afe-b0c7-dd6036568826"
       }
     }
   }
