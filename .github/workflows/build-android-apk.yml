@@ -31,13 +31,6 @@ jobs:
           # ✅ تم إزالة "expo install --fix" لمنع الترقية التلقائية لـ SDK 55
           npm install --legacy-peer-deps
 
-      - name: Verify plugins are installed
-        run: |
-          echo "✅ Checking expo-build-properties..."
-          node -e "require('expo-build-properties')" && echo "✅ Plugin loaded successfully"
-          echo "✅ Checking expo-screen-orientation..."
-          node -e "require('expo-screen-orientation')" && echo "✅ Plugin loaded successfully"
-
       - name: Verify EAS Authentication
         run: |
           echo "✅ EXPO_TOKEN مضبوط، المصادقة جاهزة"
