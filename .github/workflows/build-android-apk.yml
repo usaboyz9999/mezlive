@@ -27,10 +27,9 @@ jobs:
 
       - name: Install dependencies
         run: |
-          # ✅ استخدام --legacy-peer-deps لتجاوز تعارضات الاعتمادات
+          # ✅ تثبيت الاعتمادات مع تجاوز تعارضات الأقران
+          # ✅ تم إزالة "expo install --fix" لمنع الترقية التلقائية لـ SDK 55
           npm install --legacy-peer-deps
-          # ✅ تثبيت حزم Expo المتوافقة مع SDK تلقائياً
-          npx expo install --fix
 
       - name: Verify plugins are installed
         run: |
