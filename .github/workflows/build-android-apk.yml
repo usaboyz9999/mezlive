@@ -28,29 +28,42 @@ jobs:
       - name: Install dependencies
         run: |
           npm install
-          npm install -g eas-cli
+          npm install -g eas-cli@latest
 
-      - name: Setup EAS
-        run: eas login --token ${{ secrets.EXPO_TOKEN }}
+      - name: Setup EAS (using EXPO_TOKEN env var)
+        run: |
+          # ✅ الطريقة الصحيحة: تعيين المتغير ثم تشغيل eas login بدون --token
+          export EXPO_TOKEN="${{ secrets.EXPO_TOKEN }}"
+          echo "EXPO_TOKEN is set: ${EXPO_TOKEN:0:10}..."
+          eas login
+          eas whoami
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
 
       - name: Build Android APK
         id: eas_build
         run: |
-          # ✅ إضافة --json لاستخراج رابط التحميل تلقائياً
+          # ✅ البناء مع إخراج النتيجة بصيغة JSON لاستخراج الرابط
           BUILD_OUTPUT=$(eas build --platform android --profile production --non-interactive --json)
-          BUILD_URL=$(echo "$BUILD_OUTPUT" | jq -r '.[0].artifacts.applicationArchiveUrl')
-          echo "build_url=$BUILD_URL" >> $GITHUB_OUTPUT
-          echo "✅ Build completed: $BUILD_URL"
+          BUILD_URL=$(echo "$BUILD_OUTPUT" | jq -r '.[0].artifacts.applicationArchiveUrl // empty')
+          
+          if [ -n "$BUILD_URL" ]; then
+            echo "build_url=$BUILD_URL" >> $GITHUB_OUTPUT
+            echo "✅ Build completed: $BUILD_URL"
+          else
+            echo "⚠️ Could not extract build URL from JSON output"
+            echo "$BUILD_OUTPUT"
+          fi
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
 
       - name: Download APK from EAS
+        if: steps.eas_build.outputs.build_url != ''
         run: |
           mkdir -p builds
           curl -L -o builds/mezlive.apk "${{ steps.eas_build.outputs.build_url }}"
           echo "✅ APK downloaded to builds/mezlive.apk"
+          ls -lh builds/
 
       - name: Upload to GitHub Release (if tag)
         if: startsWith(github.ref, 'refs/tags/')
@@ -60,16 +73,21 @@ jobs:
           name: Release ${{ github.ref_name }}
           body: |
             ## 📱 mezlive ${{ github.ref_name }}
-            ### 🔗 التحميل:
+            
+            ### 🔗 روابط التحميل:
             - [من GitHub Releases](https://github.com/${{ github.repository }}/releases/latest/download/mezlive.apk)
             - [من Expo Dashboard](${{ steps.eas_build.outputs.build_url }})
+            
+            ### 📋 متطلبات النظام:
+            - أندرويد 5.0 أو أحدث
+            - مساحة تخزين: 50 ميجابايت
           draft: false
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload to Expo Dashboard (via submit)
-        if: github.ref == 'refs/heads/main'
+      - name: Submit to Expo Dashboard
+        if: github.ref == 'refs/heads/main' && steps.eas_build.outputs.build_url != ''
         run: |
           eas submit --platform android --latest --non-interactive --path builds/mezlive.apk
         env:
