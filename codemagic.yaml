@@ -1,0 +1,35 @@
+workflows:
+  android-apk:
+    name: Build Android APK
+    max_build_duration: 60
+    instance_type: mac_mini_m1  # أو linux
+    
+    environment:
+      node: 20.10.0
+      java: 17
+      
+    scripts:
+      - name: Install dependencies
+        script: |
+          npm install --legacy-peer-deps
+          
+      - name: Prebuild Android
+        script: |
+          npx expo prebuild --platform android --clean --no-install
+          
+      - name: Build APK
+        script: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleRelease --no-daemon
+          
+    artifacts:
+      - android/app/build/outputs/**/*.apk
+      
+    publishing:
+      email:
+        recipients:
+          - your-email@example.com
+        notify:
+          success: true
+          failure: true
