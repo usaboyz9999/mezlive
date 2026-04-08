@@ -47,8 +47,6 @@
             "targetSdkVersion": 34,
             "compileSdkVersion": 34,
             "tvEnabled": true,
-            "enableProguardInReleaseBuilds": true,
-            "enableShrinkResourcesInReleaseBuilds": true,
             "kotlinVersion": "2.0.21"
           }
         }
