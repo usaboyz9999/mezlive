@@ -27,4 +27,65 @@ jobs:
 
       - name: Install dependencies
         run: |
-          # ✅ استخدام npm install بدلاً من npm ci
+          npm install
+          npm install -g eas-cli
+
+      - name: Setup EAS
+        run: eas login --token ${{ secrets.EXPO_TOKEN }}
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Build Android APK
+        id: eas_build
+        run: |
+          # ✅ إضافة --json لاستخراج رابط التحميل تلقائياً
+          BUILD_OUTPUT=$(eas build --platform android --profile production --non-interactive --json)
+          BUILD_URL=$(echo "$BUILD_OUTPUT" | jq -r '.[0].artifacts.applicationArchiveUrl')
+          echo "build_url=$BUILD_URL" >> $GITHUB_OUTPUT
+          echo "✅ Build completed: $BUILD_URL"
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Download APK from EAS
+        run: |
+          mkdir -p builds
+          curl -L -o builds/mezlive.apk "${{ steps.eas_build.outputs.build_url }}"
+          echo "✅ APK downloaded to builds/mezlive.apk"
+
+      - name: Upload to GitHub Release (if tag)
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ./builds/mezlive.apk
+          name: Release ${{ github.ref_name }}
+          body: |
+            ## 📱 mezlive ${{ github.ref_name }}
+            ### 🔗 التحميل:
+            - [من GitHub Releases](https://github.com/${{ github.repository }}/releases/latest/download/mezlive.apk)
+            - [من Expo Dashboard](${{ steps.eas_build.outputs.build_url }})
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload to Expo Dashboard (via submit)
+        if: github.ref == 'refs/heads/main'
+        run: |
+          eas submit --platform android --latest --non-interactive --path builds/mezlive.apk
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Save build information
+        run: |
+          mkdir -p builds
+          echo "Build completed at $(date -u)" > builds/build-info.txt
+          echo "Commit: ${{ github.sha }}" >> builds/build-info.txt
+          echo "Version: ${{ github.ref_name }}" >> builds/build-info.txt
+          echo "Expo URL: ${{ steps.eas_build.outputs.build_url }}" >> builds/build-info.txt
+
+      - name: Upload build artifacts to GitHub
+        uses: actions/upload-artifact@v4
+        with:
+          name: mezlive-android-apk
+          path: ./builds/
+          retention-days: 30
