@@ -1,25 +1,64 @@
 {
   "expo": {
+    "owner": "atlobni2",
     "name": "mezlive",
     "slug": "mezlive",
     "version": "1.0.0",
-    "orientation": "portrait",
+    "orientation": "default",
+    "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
     "splash": {
+      "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#0F0C29"
+      "backgroundColor": "#0f0f1a"
     },
+    "sdkVersion": "54.0.0",
+    "platforms": ["android", "web"],
     "android": {
+      "package": "com.mezlive.app",
+      "versionCode": 1,
       "adaptiveIcon": {
-        "backgroundColor": "#0F0C29"
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0f0f1a"
       },
-      "usesCleartextTraffic": true
+      "permissions": [
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.WAKE_LOCK"
+      ],
+      "softwareKeyboardLayoutMode": "pan",
+      "tvEnabled": true,
+      "leanbackLauncher": {
+        "enabled": true,
+        "icon": "./assets/tv-icon.png",
+        "banner": "./assets/tv-banner.png"
+      },
+      "allowBackup": false,
+      "useNextNotificationsApi": true
     },
-    "ios": {
-      "supportsTablet": true
+    "web": {
+      "favicon": "./assets/favicon.png"
     },
-    "locales": {
-      "ar": "العربية"
+    "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "minSdkVersion": 21,
+            "targetSdkVersion": 34,
+            "compileSdkVersion": 34,
+            "tvEnabled": true,
+            "enableProguardInReleaseBuilds": true,
+            "enableShrinkResourcesInReleaseBuilds": true
+          }
+        }
+      ],
+      "expo-screen-orientation"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "1ca0d3a8-eab5-4afe-b0c7-dd6036568826"
+      }
     }
   }
 }
