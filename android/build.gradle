@@ -1,39 +1,32 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
+// Top-level build file — Expo SDK 54 / React Native 0.76
+// ✅ تم إصلاح تعارض Kotlin KSP بحذف expo-gradle-plugin من Maven
 
 buildscript {
     ext {
-        // ✅ تعريف kotlinVersion صراحة لحل خطأ "unknown property"
-        kotlinVersion = '2.0.21'
-        
-        // إعدادات أندرويد القياسية لـ Expo SDK 54
-        minSdkVersion = 21
-        targetSdkVersion = 34
-        compileSdkVersion = 34
-        ndkVersion = '26.1.10909125'
+        buildToolsVersion = "35.0.0"
+        minSdkVersion    = 21
+        compileSdkVersion = 35
+        targetSdkVersion  = 34
+        kotlinVersion    = "2.0.21"
+        ndkVersion       = "26.1.10909125"
     }
-    
+
     repositories {
         google()
         mavenCentral()
     }
-    
+
     dependencies {
-        // ✅ الآن سيوجد المتغير عند استخدامه هنا
+        // ✅ AGP — بدون تثبيت إصدار، Gradle يختار التوافق تلقائياً
+        classpath("com.android.tools.build:gradle")
+        // ✅ React Native Gradle Plugin (مطلوب لـ RN 0.76)
+        classpath("com.facebook.react:react-native-gradle-plugin")
+        // ✅ Kotlin 2.0.21 — متوافق مع KSP المستخدم في Expo SDK 54
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
-        classpath("com.android.tools.build:gradle:8.2.1")
-        // Expo plugins
-        classpath("expo.gradle.plugin:expo-gradle-plugin:0.2.0")
+        // ❌ تم حذف: expo.gradle.plugin:expo-gradle-plugin:0.2.0
+        //    كان يجلب Kotlin 1.9.24 سراً ويكسر KSP
     }
 }
 
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-        maven { url 'https://www.jitpack.io' }
-    }
-}
-
-// Expo autolinking setup
-apply plugin: "expo-root-project"
-apply from: "expo-autolinking.gradle"
+// ✅ expo-autolinking مُعدّ في settings.gradle عبر useExpoModules()
+apply plugin: "com.facebook.react.rootproject"
