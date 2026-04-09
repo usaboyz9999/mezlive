@@ -39,6 +39,18 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "kotlinVersion": "2.0.21",
+            "minSdkVersion": 21,
+            "targetSdkVersion": 34,
+            "compileSdkVersion": 34,
+            "tvEnabled": true
+          }
+        }
+      ],
       "expo-screen-orientation"
     ],
     "extra": {
